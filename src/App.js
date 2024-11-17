@@ -1,23 +1,33 @@
-import logo from './logo.svg';
-import './App.css';
+
+
+
+import React, { useState, useEffect } from "react";
+import Board from "./components/Board";
+import "./App.css"; // Ensure your styles are linked
 
 function App() {
+  const [tasks, setTasks] = useState([]);
+  const [darkMode, setDarkMode] = useState(false);
+
+  useEffect(() => {
+    fetch("https://api.quicksell.co/v1/internal/frontend-assignment")
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data); // Debug API response
+        setTasks(data.tickets || []); // Use correct field
+      })
+      .catch((error) => console.error("Error fetching tasks:", error));
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+    <div className={darkMode ? "dark-mode" : ""}>
+      <header>
+        <h1>Kanban Board</h1>
+        <button onClick={() => setDarkMode(!darkMode)}>
+          {darkMode ? "Light Mode" : "Dark Mode"}
+        </button>
       </header>
+      <Board tasks={tasks} />
     </div>
   );
 }
